@@ -9,8 +9,7 @@ const wasm = await WebAssembly.instantiateStreaming(
 );
 wasi.inst = wasm.instance;
 const exports = wasm.instance.exports;
-let test = exports.hs_init();
-console.log(test);
+exports.hs_init();
 const memory = exports.memory;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -21,7 +20,6 @@ console.log("Initialized WASI reactor.");
 document.querySelector("#format").addEventListener("click", (event) => {
   const input = document.getElementById("input").value;
   event.preventDefault();
-  console.log(input);
 
   const inputLen = encoder.encode(input).byteLength;
   const inputPtr = exports.malloc(inputLen);
