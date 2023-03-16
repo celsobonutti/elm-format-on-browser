@@ -9,7 +9,7 @@ const wasm = await WebAssembly.instantiateStreaming(
 );
 wasi.inst = wasm.instance;
 const exports = wasm.instance.exports;
-let test = await exports.hs_init();
+let test = exports.hs_init();
 console.log(test);
 const memory = exports.memory;
 const encoder = new TextEncoder();
