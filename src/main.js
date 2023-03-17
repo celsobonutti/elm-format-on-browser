@@ -4,7 +4,7 @@ import { WASI } from "@bjorn3/browser_wasi_shim";
 const wasi = new WASI([], [], []);
 const wasiImportObj = { wasi_snapshot_preview1: wasi.wasiImport };
 const wasm = await WebAssembly.instantiateStreaming(
-  fetch("Format.wasm"),
+  fetch("format.wasm"),
   wasiImportObj
 );
 wasi.inst = wasm.instance;
@@ -26,12 +26,17 @@ document.querySelector("#format").addEventListener("click", (event) => {
   const inputArr = new Uint8Array(memory.buffer, inputPtr, inputLen);
   encoder.encodeInto(input, inputArr);
   const outputLen = exports.formatRaw(inputPtr, inputLen, outputPtrPtr);
-  const outputPtrArr = new Uint32Array(memory.buffer, outputPtrPtr, 1);
-  const outputPtr = outputPtrArr[0];
-  const outputArr = new Uint8Array(memory.buffer, outputPtr, outputLen);
-  const output = decoder.decode(outputArr);
+  if (outputLen < 0) {
+    console.log("Error");
+    return;
+  } else {
+    const outputPtrArr = new Uint32Array(memory.buffer, outputPtrPtr, 1);
+    const outputPtr = outputPtrArr[0];
+    const outputArr = new Uint8Array(memory.buffer, outputPtr, outputLen);
+    const output = decoder.decode(outputArr);
 
-  const outputElement = document.getElementById("output");
-  outputElement.value = output;
-  exports.free(outputPtr);
+    const outputElement = document.getElementById("output");
+    outputElement.value = output;
+    exports.free(outputPtr);
+  }
 });
